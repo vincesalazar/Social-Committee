@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const { randomUUID } = require("crypto");
 
+const API_PASSWORD = "MySecret123"; // keep this secret
+
 const fs = require("fs");
 const DATA_FILE = "inventory.json";
 
@@ -10,6 +12,14 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+
+app.use((req, res, next) => {
+  const password = req.headers["x-api-password"];
+  if (password !== API_PASSWORD) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  next();
+});
 
 let inventory = [];
 

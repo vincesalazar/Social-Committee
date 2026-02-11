@@ -1,3 +1,6 @@
+const API_URL = "https://social-committee.onrender.com/items";
+const API_PASSWORD = "MySecret123";
+
 const form = document.getElementById("form");
 const list = document.getElementById("list");
 
@@ -7,12 +10,17 @@ const qtyInput = document.getElementById("qty");
 const priceInput = document.getElementById("price");
 
 let editingId = null;
+let currentItems = [];
 
 window.addEventListener("load", () => {
   nameInput.focus();
   loadItems();
 });
 
+
+// =======================
+// ADD OR UPDATE ITEM
+// =======================
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -25,18 +33,24 @@ form.addEventListener("submit", async (e) => {
   };
 
   if (editingId) {
-    await fetch(`https://social-committee.onrender.com/items/${editingId}`, {
+    await fetch(`${API_URL}/items/${editingId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-password": API_PASSWORD
+      },
       body: JSON.stringify(item)
     });
 
     editingId = null;
 
   } else {
-    await fetch("https://social-committee.onrender.com/items", {
+    await fetch(`${API_URL}/items`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-password": API_PASSWORD
+      },
       body: JSON.stringify(item)
     });
   }
@@ -46,58 +60,73 @@ form.addEventListener("submit", async (e) => {
   loadItems();
 });
 
-let currentItems = [];
+
+// =======================
+// LOAD ITEMS
+// =======================
 
 async function loadItems() {
-  const res = await fetch("https://social-committee.onrender.com/items");
+  const res = await fetch(`${API_URL}/items`, {
+    headers: {
+      "x-api-password": API_PASSWORD
+    }
+  });
+
   const data = await res.json();
 
   currentItems = data;
+
   const totalCost = data.reduce((sum, item) => sum + item.bulkCost, 0);
   const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
   const totalProfit = data.reduce((sum, item) => sum + item.totalProfit, 0);
   const totalProducts = data.length;
-    summary.innerHTML = `
+
+  summary.innerHTML = `
     <h2>Booster Club Summary</h2>
     Products: ${totalProducts}<br>
     Total Invested: $${totalCost.toFixed(2)}<br>
     Projected Revenue: $${totalRevenue.toFixed(2)}<br>
     Projected Profit: $${totalProfit.toFixed(2)}
-    `;
+  `;
 
-    list.innerHTML = data.map(item => `
-        <div id="data">
-            <strong>${item.name}</strong><br>
+  list.innerHTML = data.map(item => `
+    <div id="data">
+      <strong>${item.name}</strong><br>
 
-            <p>Bulk Cost (total paid): $${item.bulkCost.toFixed(2)}</p>
-            <p>Selling Price (each): $${item.sellPrice.toFixed(2)}</p>
-            <p>Quantity in Bulk: ${item.bulkQuantity}</p>
-            <p>Cost per item: $${item.costPerItem.toFixed(2)}</p>
-            <p>Revenue: $${item.revenue.toFixed(2)}</p>
-            <p>Profit: $${item.totalProfit.toFixed(2)}</p>
+      <p>Bulk Cost (total paid): $${item.bulkCost.toFixed(2)}</p>
+      <p>Selling Price (each): $${item.sellPrice.toFixed(2)}</p>
+      <p>Quantity in Bulk: ${item.bulkQuantity}</p>
+      <p>Cost per item: $${item.costPerItem.toFixed(2)}</p>
+      <p>Revenue: $${item.revenue.toFixed(2)}</p>
+      <p>Profit: $${item.totalProfit.toFixed(2)}</p>
 
-            <button onclick="deleteItem('${item.id}')">Delete</button>
-            <button onclick="editItem('${item.id}')">Edit</button>
-        </div>
-        <hr>
-    `).join("");
-
+      <button onclick="deleteItem('${item.id}')">Delete</button>
+      <button onclick="editItem('${item.id}')">Edit</button>
+    </div>
+    <hr>
+  `).join("");
 }
 
+
+// =======================
+// DELETE ITEM
+// =======================
+
 async function deleteItem(id) {
-  await fetch(`https://social-committee.onrender.com/items/${id}`, {
-    method: "DELETE"
+  await fetch(`${API_URL}/items/${id}`, {
+    method: "DELETE",
+    headers: {
+      "x-api-password": API_PASSWORD
+    }
   });
 
   loadItems();
 }
 
 
-loadItems();
-
-function capitalizeFirstLetter(val) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-}
+// =======================
+// EDIT ITEM
+// =======================
 
 function editItem(id) {
   const item = currentItems.find(i => i.id === id);
@@ -110,4 +139,3 @@ function editItem(id) {
   editingId = id;
   nameInput.focus();
 }
-
