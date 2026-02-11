@@ -1,5 +1,19 @@
-const API_URL = "https://social-committee.onrender.com/items";
-const API_PASSWORD = "MySecret123";
+// frontend.js
+
+const API_URL = "https://social-committee.onrender.com"; // Your Render API
+let API_PASSWORD = sessionStorage.getItem("apiPassword");  // Check if user already entered
+
+// ===== ONE-TIME PASSWORD PROMPT =====
+if (!API_PASSWORD) {
+  API_PASSWORD = prompt("Enter site password:"); // Ask user once
+
+  if (!API_PASSWORD) {
+    alert("Password required. Reloading...");
+    throw new Error("No password entered");
+  }
+
+  sessionStorage.setItem("apiPassword", API_PASSWORD); // store for this session
+}
 
 const form = document.getElementById("form");
 const list = document.getElementById("list");

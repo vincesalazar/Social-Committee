@@ -1,20 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const { randomUUID } = require("crypto");
-
-const API_PASSWORD = "MySecret123"; // keep this secret
-
 const fs = require("fs");
-const DATA_FILE = "inventory.json";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+const DATA_FILE = "inventory.json";
 
+// ===== PUT THE PASSWORD HERE =====
+const API_PASSWORD = "MySecret123"; // <-- This is the password your frontend will send
+
+// ===== PASSWORD PROTECTION MIDDLEWARE =====
 app.use((req, res, next) => {
-  const password = req.headers["x-api-password"];
+  const password = req.headers["x-api-password"]; // fetch header from frontend
   if (password !== API_PASSWORD) {
     return res.status(401).json({ error: "Unauthorized" });
   }
