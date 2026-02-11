@@ -1,22 +1,11 @@
 // frontend.js
 
-const API_URL = "https://social-committee.onrender.com"; // Your Render API
-let API_PASSWORD = sessionStorage.getItem("apiPassword");  // Check if user already entered
-
-// ===== ONE-TIME PASSWORD PROMPT =====
-if (!API_PASSWORD) {
-  API_PASSWORD = prompt("Enter site password:"); // Ask user once
-
-  if (!API_PASSWORD) {
-    alert("Password required. Reloading...");
-    throw new Error("No password entered");
-  }
-
-  sessionStorage.setItem("apiPassword", API_PASSWORD); // store for this session
-}
+const API_URL = "https://social-committee.onrender.com"; // Render API
+let API_PASSWORD = sessionStorage.getItem("apiPassword");  // check if already stored
 
 const form = document.getElementById("form");
 const list = document.getElementById("list");
+const summary = document.getElementById("summary");
 
 const nameInput = document.getElementById("name");
 const costInput = document.getElementById("cost");
@@ -26,16 +15,55 @@ const priceInput = document.getElementById("price");
 let editingId = null;
 let currentItems = [];
 
-window.addEventListener("load", () => {
-  nameInput.focus();
-  loadItems();
-});
+// =======================
+// ONE-TIME PASSWORD PROMPT
+// =======================
+async function getPassword() {
+  if (!API_PASSWORD) {
+    API_PASSWORD = prompt("Enter site password:");
+    if (!API_PASSWORD) {
+      alert("Password required. Reloading...");
+      throw new Error("No password entered");
+    }
+    sessionStorage.setItem("apiPassword", API_PASSWORD);
+  }
+}
 
+// =======================
+// SECURE FETCH HELPER
+// =======================
+async function secureFetch(url, options = {}) {
+  options.headers = {
+    ...(options.headers || {}),
+    "x-api-password": API_PASSWORD
+  };
+
+  const res = await fetch(url, options);
+
+  if (res.status === 401) {
+    sessionStorage.removeItem("apiPassword");
+    alert("Wrong password. Reloading...");
+    location.reload();
+    return;
+  }
+
+  return res;
+}
+
+// =======================
+// INIT
+// =======================
+async function init() {
+  await getPassword();       // ask for password first
+  nameInput.focus();
+  loadItems();               // now fetch safely
+}
+
+window.addEventListener("load", init);
 
 // =======================
 // ADD OR UPDATE ITEM
 // =======================
-
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -47,24 +75,16 @@ form.addEventListener("submit", async (e) => {
   };
 
   if (editingId) {
-    await fetch(`${API_URL}/items/${editingId}`, {
+    await secureFetch(`${API_URL}/items/${editingId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-password": API_PASSWORD
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item)
     });
-
     editingId = null;
-
   } else {
-    await fetch(`${API_URL}/items`, {
+    await secureFetch(`${API_URL}/items`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-password": API_PASSWORD
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item)
     });
   }
@@ -74,18 +94,11 @@ form.addEventListener("submit", async (e) => {
   loadItems();
 });
 
-
 // =======================
 // LOAD ITEMS
 // =======================
-
 async function loadItems() {
-  const res = await fetch(`${API_URL}/items`, {
-    headers: {
-      "x-api-password": API_PASSWORD
-    }
-  });
-
+  const res = await secureFetch(`${API_URL}/items`);
   const data = await res.json();
 
   currentItems = data;
@@ -106,14 +119,12 @@ async function loadItems() {
   list.innerHTML = data.map(item => `
     <div id="data">
       <strong>${item.name}</strong><br>
-
       <p>Bulk Cost (total paid): $${item.bulkCost.toFixed(2)}</p>
       <p>Selling Price (each): $${item.sellPrice.toFixed(2)}</p>
       <p>Quantity in Bulk: ${item.bulkQuantity}</p>
       <p>Cost per item: $${item.costPerItem.toFixed(2)}</p>
       <p>Revenue: $${item.revenue.toFixed(2)}</p>
       <p>Profit: $${item.totalProfit.toFixed(2)}</p>
-
       <button onclick="deleteItem('${item.id}')">Delete</button>
       <button onclick="editItem('${item.id}')">Edit</button>
     </div>
@@ -121,27 +132,17 @@ async function loadItems() {
   `).join("");
 }
 
-
 // =======================
 // DELETE ITEM
 // =======================
-
 async function deleteItem(id) {
-  await fetch(`${API_URL}/items/${id}`, {
-    method: "DELETE",
-    headers: {
-      "x-api-password": API_PASSWORD
-    }
-  });
-
+  await secureFetch(`${API_URL}/items/${id}`, { method: "DELETE" });
   loadItems();
 }
-
 
 // =======================
 // EDIT ITEM
 // =======================
-
 function editItem(id) {
   const item = currentItems.find(i => i.id === id);
 
