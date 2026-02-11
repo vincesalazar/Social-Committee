@@ -1,0 +1,126 @@
+/* --- Base styles --- */
+body {
+  font-family: "Arial", sans-serif;
+  background: #fffbf7; /* very light blue background */
+  color: #333;
+  padding: 40px;
+  line-height: 1.5;
+}
+
+/* --- Headings --- */
+h1, h2 {
+  color: #3D5A80; /* deep blue for headings */
+}
+
+h2 {
+  margin-bottom: 15px;
+}
+
+/* --- Form Styles --- */
+form#form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+  background: #fffbf7;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* slightly deeper shadow */
+}
+
+form input {
+  padding: 12px 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  flex: 1 1 150px;
+  background: #f9fafb; /* subtle input background */
+}
+
+form button {
+  padding: 12px 20px;
+  border: none;
+  background-color: #E34A6F; /* nice strong blue */
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* --- Summary Dashboard --- */
+#summary {
+  background: #fefefe;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+  font-size: 16px;
+  line-height: 1.6;
+  border-left: 6px solid #E34A6F; /* subtle accent color */
+}
+
+/* --- Inventory List --- */
+#list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* --- Inventory Cards --- */
+#list div {
+  background: #ffffff;
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-top: 3px solid #60a5fa; /* subtle colored stripe on top for pizzazz */
+  transition: transform 0.1s ease; /* harmless static effect, can remove later */
+}
+
+/* --- Inventory Item Header --- */
+#list strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #1e3a8a;
+}
+
+/* --- Inventory Data Lines --- */
+#list div p {
+  margin: 0 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#list div p:last-child {
+  border-bottom: none;
+}
+
+/* --- Buttons --- */
+#list button {
+  margin-top: 10px;
+  margin-right: 8px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.1s ease;
+}
+
+#list button:nth-child(1) {
+  background-color: #ef4444; /* Delete = red */
+  color: white;
+}
+
+#list button:nth-child(2) {
+  background-color: #10b981; /* Edit = green */
+  color: white;
+}
+
+#list button:active {
+  opacity: 0.85;
+}
+
+/* --- Optional subtle hover (non-animation) --- */
+#list div:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); /* slightly stronger shadow on hover */
+}/*# sourceMappingURL=style.css.map */

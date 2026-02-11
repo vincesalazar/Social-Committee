@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Money B**ch</title>
+</head>
+<body>
+    <form id="form">
+        <input placeholder="Item name" id="name" required>
+        <input placeholder="Bulk cost" id="cost" type="number" step="0.01" required>
+        <input placeholder="Quantity" id="qty" type="number" required>
+        <input placeholder="Sell price" id="price" type="number" step="0.01" required>
+        <button type="submit">Add Item</button>
+    </form>
+
+    <div id="summary"></div>
+
+    <h2 id="inventory">Inventory</h2>
+    <div id="list"></div>
+
+    <script src="app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="gsap.js"></script>
+</body>
+</html>
