@@ -1,26 +1,37 @@
 const express = require("express");
 const cors = require("cors");
 const { randomUUID } = require("crypto");
+
 const fs = require("fs");
+const DATA_FILE = "inventory.json";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = "inventory.json";
 
 let inventory = [];
 
-// load inventory from file if exists
+// Load inventory from file if it exists
 if (fs.existsSync(DATA_FILE)) {
-  inventory = JSON.parse(fs.readFileSync(DATA_FILE));
+  try {
+    const fileData = fs.readFileSync(DATA_FILE, "utf-8");
+    inventory = JSON.parse(fileData);
+    console.log("Inventory loaded from file.");
+  } catch (err) {
+    console.error("Error loading inventory file:", err);
+  }
 }
 
-// helper function to save inventory
 function saveInventory() {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(inventory, null, 2));
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(inventory, null, 2));
+  } catch (err) {
+    console.error("Error saving inventory:", err);
+  }
 }
+
 
 // profit calculator function
 function calculate(item) {

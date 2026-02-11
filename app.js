@@ -25,7 +25,7 @@ form.addEventListener("submit", async (e) => {
   };
 
   if (editingId) {
-    await fetch(`http://localhost:3000/items/${editingId}`, {
+    await fetch(`https://social-committee.onrender.com/items/${editingId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item)
@@ -34,7 +34,7 @@ form.addEventListener("submit", async (e) => {
     editingId = null;
 
   } else {
-    await fetch("http://localhost:3000/items", {
+    await fetch("https://social-committee.onrender.com/items", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item)
@@ -49,7 +49,7 @@ form.addEventListener("submit", async (e) => {
 let currentItems = [];
 
 async function loadItems() {
-  const res = await fetch("http://localhost:3000/items");
+  const res = await fetch("https://social-committee.onrender.com/items");
   const data = await res.json();
 
   currentItems = data;
@@ -85,7 +85,7 @@ async function loadItems() {
 }
 
 async function deleteItem(id) {
-  await fetch(`http://localhost:3000/items/${id}`, {
+  await fetch(`https://social-committee.onrender.com/items/${id}`, {
     method: "DELETE"
   });
 
